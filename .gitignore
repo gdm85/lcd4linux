@@ -1,0 +1,12 @@
+*.o
+.deps/
+autom4te.cache/
+m4/
+config.log
+config.status
+config.h
+compile
+ltmain.sh
+stamp-h1
+Makefile
+lcd4linux
