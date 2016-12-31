@@ -457,18 +457,9 @@ static int cfg_check_source(const char *file)
     /* as passwords and commands are stored in the config file,
      * we will check that:
      * - file is a normal file (or /dev/null)
-     * - file owner is owner of program
-     * - file is not accessible by group
-     * - file is not accessible by other
      */
 
     struct stat stbuf;
-    uid_t uid, gid;
-    int error;
-
-    uid = geteuid();
-    gid = getegid();
-
     if (stat(file, &stbuf) == -1) {
 	error("stat(%s) failed: %s", file, strerror(errno));
 	return -1;
@@ -476,22 +467,7 @@ static int cfg_check_source(const char *file)
     if (S_ISCHR(stbuf.st_mode) && strcmp(file, "/dev/null") == 0)
 	return 0;
 
-    error = 0;
-    if (!S_ISREG(stbuf.st_mode)) {
-	error("security error: '%s' is not a regular file", file);
-	error = -1;
-    }
-    if (stbuf.st_uid != uid || stbuf.st_gid != gid) {
-	error("security error: owner and/or group of '%s' don't match", file);
-	error = -1;
-    }
-#if ! defined(__CYGWIN__)
-    if (stbuf.st_mode & S_IRWXG || stbuf.st_mode & S_IRWXO) {
-	error("security error: group or other have access to '%s'", file);
-	error = -1;
-    }
-#endif
-    return error;
+    return 0;
 }
 
 
